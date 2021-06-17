@@ -1,10 +1,10 @@
 {
-  "name": "react-scripts",
+  "name": "zp-react-scripts",
   "version": "4.0.3",
-  "description": "Configuration and scripts for Create React App.",
+  "description": "Configuration and scripts for Create React App using with zp.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/facebook/create-react-app.git",
+    "url": "https://github.com/zppack/create-react-app.git",
     "directory": "packages/react-scripts"
   },
   "license": "MIT",
@@ -12,7 +12,7 @@
     "node": "^10.12.0 || >=12.0.0"
   },
   "bugs": {
-    "url": "https://github.com/facebook/create-react-app/issues"
+    "url": "https://github.com/zppack/create-react-app/issues"
   },
   "files": [
     "bin",
@@ -24,7 +24,7 @@
     "utils"
   ],
   "bin": {
-    "react-scripts": "./bin/react-scripts.js"
+    "zp-react-scripts": "./bin/react-scripts.js"
   },
   "types": "./lib/react-app.d.ts",
   "dependencies": {
@@ -87,6 +87,7 @@
     "webpack": "4.44.2",
     "webpack-dev-server": "3.11.1",
     "webpack-manifest-plugin": "3.0.0",
+    "webpack-merge": "^5.8.0",
     "workbox-webpack-plugin": "5.1.4"
   },
   "devDependencies": {

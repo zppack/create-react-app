@@ -25,7 +25,8 @@ const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 // like /todos/42/static/js/bundle.7289d.js. We have to know the root.
 const publicUrlOrPath = getPublicUrlOrPath(
   process.env.NODE_ENV === 'development',
-  require(resolveApp('package.json')).homepage,
+  // require(resolveApp('package.json')).homepage,
+  undefined,
   process.env.PUBLIC_URL
 );
 
@@ -73,6 +74,7 @@ module.exports = {
   yarnLockFile: resolveApp('yarn.lock'),
   testsSetup: resolveModule(resolveApp, 'src/setupTests'),
   proxySetup: resolveApp('src/setupProxy.js'),
+  proxyConfig: resolveApp('proxy.config.js'),
   appNodeModules: resolveApp('node_modules'),
   swSrc: resolveModule(resolveApp, 'src/service-worker'),
   publicUrlOrPath,
@@ -96,6 +98,7 @@ module.exports = {
   yarnLockFile: resolveApp('yarn.lock'),
   testsSetup: resolveModule(resolveApp, 'src/setupTests'),
   proxySetup: resolveApp('src/setupProxy.js'),
+  proxyConfig: resolveApp('proxy.config.js'),
   appNodeModules: resolveApp('node_modules'),
   swSrc: resolveModule(resolveApp, 'src/service-worker'),
   publicUrlOrPath,
@@ -132,6 +135,7 @@ if (
     yarnLockFile: resolveOwn(`${templatePath}/yarn.lock`),
     testsSetup: resolveModule(resolveOwn, `${templatePath}/src/setupTests`),
     proxySetup: resolveOwn(`${templatePath}/src/setupProxy.js`),
+    proxyConfig: resolveOwn(`${templatePath}/proxy.config.js`),
     appNodeModules: resolveOwn('node_modules'),
     swSrc: resolveModule(resolveOwn, `${templatePath}/src/service-worker`),
     publicUrlOrPath,

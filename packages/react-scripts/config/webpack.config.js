@@ -39,6 +39,8 @@ const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
 // @remove-on-eject-end
 const postcssNormalize = require('postcss-normalize');
 
+const { merge: webpackMerge } = require('webpack-merge');
+
 const appPackageJson = require(paths.appPackageJson);
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
@@ -89,7 +91,7 @@ const hasJsxRuntime = (() => {
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
-module.exports = function (webpackEnv) {
+const defaultConfig = function (webpackEnv) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
 
@@ -179,33 +181,6 @@ module.exports = function (webpackEnv) {
         ? 'source-map'
         : false
       : isEnvDevelopment && 'cheap-module-source-map',
-    // These are the "entry points" to our application.
-    // This means they will be the "root" imports that are included in JS bundle.
-    entry:
-      isEnvDevelopment && !shouldUseReactRefresh
-        ? [
-            // Include an alternative client for WebpackDevServer. A client's job is to
-            // connect to WebpackDevServer by a socket and get notified about changes.
-            // When you save a file, the client will either apply hot updates (in case
-            // of CSS changes), or refresh the page (in case of JS changes). When you
-            // make a syntax error, this client will display a syntax error overlay.
-            // Note: instead of the default WebpackDevServer client, we use a custom one
-            // to bring better experience for Create React App users. You can replace
-            // the line below with these two lines if you prefer the stock client:
-            //
-            // require.resolve('webpack-dev-server/client') + '?/',
-            // require.resolve('webpack/hot/dev-server'),
-            //
-            // When using the experimental react-refresh integration,
-            // the webpack plugin takes care of injecting the dev client for us.
-            webpackDevClientEntry,
-            // Finally, this is your app's code:
-            paths.appIndexJs,
-            // We include the app code last so that if there is a runtime error during
-            // initialization, it doesn't blow up the WebpackDevServer client, and
-            // changing JS code would still trigger a refresh.
-          ]
-        : paths.appIndexJs,
     output: {
       // The build folder.
       path: isEnvProduction ? paths.appBuild : undefined,
@@ -615,32 +590,6 @@ module.exports = function (webpackEnv) {
       ].filter(Boolean),
     },
     plugins: [
-      // Generates an `index.html` file with the <script> injected.
-      new HtmlWebpackPlugin(
-        Object.assign(
-          {},
-          {
-            inject: true,
-            template: paths.appHtml,
-          },
-          isEnvProduction
-            ? {
-                minify: {
-                  removeComments: true,
-                  collapseWhitespace: true,
-                  removeRedundantAttributes: true,
-                  useShortDoctype: true,
-                  removeEmptyAttributes: true,
-                  removeStyleLinkTypeAttributes: true,
-                  keepClosingSlash: true,
-                  minifyJS: true,
-                  minifyCSS: true,
-                  minifyURLs: true,
-                },
-              }
-            : undefined
-        )
-      ),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       // https://github.com/facebook/create-react-app/issues/5358
@@ -696,30 +645,6 @@ module.exports = function (webpackEnv) {
           filename: 'static/css/[name].[contenthash:8].css',
           chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
         }),
-      // Generate an asset manifest file with the following content:
-      // - "files" key: Mapping of all asset filenames to their corresponding
-      //   output file so that tools can pick it up without having to parse
-      //   `index.html`
-      // - "entrypoints" key: Array of files which are included in `index.html`,
-      //   can be used to reconstruct the HTML if necessary
-      new WebpackManifestPlugin({
-        fileName: 'asset-manifest.json',
-        publicPath: paths.publicUrlOrPath,
-        generate: (seed, files, entrypoints) => {
-          const manifestFiles = files.reduce((manifest, file) => {
-            manifest[file.name] = file.path;
-            return manifest;
-          }, seed);
-          const entrypointFiles = entrypoints.main.filter(
-            fileName => !fileName.endsWith('.map')
-          );
-
-          return {
-            files: manifestFiles,
-            entrypoints: entrypointFiles,
-          };
-        },
-      }),
       // Moment.js is an extremely popular library that bundles large locale files
       // by default due to how webpack interprets its code. This is a practical
       // solution that requires the user to opt into importing specific locales.
@@ -812,4 +737,107 @@ module.exports = function (webpackEnv) {
     // our own hints via the FileSizeReporter
     performance: false,
   };
+
+  return defaultConfig;
 };
+
+let entryConfig = (webpackEnv) => {
+  const isEnvDevelopment = webpackEnv === 'development';
+  const isEnvProduction = webpackEnv === 'production';
+
+  const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
+  const shouldUseReactRefresh = env.raw.FAST_REFRESH;
+
+  return {
+    // These are the "entry points" to our application.
+    // This means they will be the "root" imports that are included in JS bundle.
+    entry:
+      isEnvDevelopment && !shouldUseReactRefresh
+        ? [
+            // Include an alternative client for WebpackDevServer. A client's job is to
+            // connect to WebpackDevServer by a socket and get notified about changes.
+            // When you save a file, the client will either apply hot updates (in case
+            // of CSS changes), or refresh the page (in case of JS changes). When you
+            // make a syntax error, this client will display a syntax error overlay.
+            // Note: instead of the default WebpackDevServer client, we use a custom one
+            // to bring better experience for Create React App users. You can replace
+            // the line below with these two lines if you prefer the stock client:
+            //
+            // require.resolve('webpack-dev-server/client') + '?/',
+            // require.resolve('webpack/hot/dev-server'),
+            //
+            // When using the experimental react-refresh integration,
+            // the webpack plugin takes care of injecting the dev client for us.
+            webpackDevClientEntry,
+            // Finally, this is your app's code:
+            paths.appIndexJs,
+            // We include the app code last so that if there is a runtime error during
+            // initialization, it doesn't blow up the WebpackDevServer client, and
+            // changing JS code would still trigger a refresh.
+          ]
+        : paths.appIndexJs,
+    plugins: [
+      // Generates an `index.html` file with the <script> injected.
+      new HtmlWebpackPlugin(
+        Object.assign(
+          {},
+          {
+            inject: true,
+            template: paths.appHtml,
+          },
+          isEnvProduction
+            ? {
+                minify: {
+                  removeComments: true,
+                  collapseWhitespace: true,
+                  removeRedundantAttributes: true,
+                  useShortDoctype: true,
+                  removeEmptyAttributes: true,
+                  removeStyleLinkTypeAttributes: true,
+                  keepClosingSlash: true,
+                  minifyJS: true,
+                  minifyCSS: true,
+                  minifyURLs: true,
+                },
+              }
+            : undefined
+        )
+      ),
+      // Generate an asset manifest file with the following content:
+      // - "files" key: Mapping of all asset filenames to their corresponding
+      //   output file so that tools can pick it up without having to parse
+      //   `index.html`
+      // - "entrypoints" key: Array of files which are included in `index.html`,
+      //   can be used to reconstruct the HTML if necessary
+      new WebpackManifestPlugin({
+        fileName: 'asset-manifest.json',
+        publicPath: paths.publicUrlOrPath,
+        generate: (seed, files, entrypoints) => {
+          const manifestFiles = files.reduce((manifest, file) => {
+            manifest[file.name] = file.path;
+            return manifest;
+          }, seed);
+          const entrypointFiles = entrypoints.main.filter(
+            fileName => !fileName.endsWith('.map')
+          );
+
+          return {
+            files: manifestFiles,
+            entrypoints: entrypointFiles,
+          };
+        },
+      }),
+    ],
+  };
+};
+
+if (fs.existsSync(`${paths.appPath}/webpack.entry.config.js`)) {
+  const customizedEntryConfig = require(`${paths.appPath}/webpack.entry.config.js`);
+  if (typeof customizedEntryConfig === 'function') {
+    entryConfig = customizedEntryConfig;
+  } else {
+    entryConfig = () => customizedEntryConfig;
+  }
+}
+
+module.exports = (webpackEnv) => webpackMerge(defaultConfig(webpackEnv), entryConfig(webpackEnv));

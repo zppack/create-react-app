@@ -31,6 +31,10 @@ Original CRA `react-scripts` grabs NODE_ENV and REACT_APP_* environment variable
 For `zp-react-srcipts`, "REACT_APP_*" is replaced with "RUNTIME_*" by default to be the prefix of environment variables that are to be injected into the runtime application. What's more important is that when injecting into runtime app, the "RUMTIME_" prefix will be dropped. That means if you put an environment variable like "RUNTIME_XXX=xxx" in your `.env` file, you are able to use "XXX=xxx" at the runtime application.
 Of course, you may want to change a prefix of "RUNTIME_". This can be done by adding an environment variable in the `.env` file as `"RUNTIME_ENV_PREFIX=RUNTIME"`. (Don't add "_" character at the end.)
 
+### 5. Path "@" alias to "src"
+
+Add an alias rule to webpack configuration which directs path "@" to "src".
+
 ## Tips of `react-scripts`
 
 * Using a `HOST` envrionment variable to infer "allowedHost" at the local server.

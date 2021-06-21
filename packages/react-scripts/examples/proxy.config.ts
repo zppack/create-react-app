@@ -6,20 +6,22 @@
  * If both exist, the "src/setupProxy.js" and the "proxy.config.js" will work at the same time.
  */
 
-module.exports = {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default {
   '/ooooo': {
-    target: 'http://localhost:3000/about.html',
+    target: 'http://local.zhenguanyu.com:3000/index.html',
     pathRewrite: { '/ooooo': '' },
     changeOrigin: true,
   },
-  '/chichi': {
-    target: 'http://localhost:3000/home.html',
-    pathRewrite: { '/chichi': '' },
+  '/my': {
+    target: 'http://local.zhenguanyu.com:3000/about.html',
+    pathRewrite: { '/my': '' },
     changeOrigin: true,
   },
-  '/byebye': {
-    target: 'http://localhost:3000/aboutus.html',
-    pathRewrite: { '/byebye': '' },
+  '/gosh': {
+    target: 'http://local.zhenguanyu.com:3000/path/test.html',
+    pathRewrite: { '/gosh': '' },
     changeOrigin: true,
-  }
+  },
 };
+

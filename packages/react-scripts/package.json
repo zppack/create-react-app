@@ -1,6 +1,6 @@
 {
   "name": "zp-react-scripts",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "Configuration and scripts for Create React App using with zp.",
   "repository": {
     "type": "git",
@@ -82,6 +82,7 @@
     "source-map-loader": "^1.1.2",
     "style-loader": "1.3.0",
     "terser-webpack-plugin": "4.2.3",
+    "ts-node": "^10.0.0",
     "ts-pnp": "1.2.0",
     "url-loader": "4.1.1",
     "webpack": "4.44.2",

@@ -18,11 +18,11 @@ A multi-page webpack entry-config example file is placed [here](examples/webpack
 
 ### 2. Config proxy of webpack-dev-server
 
-Original CRA `react-scripts` uses a string-typed "proxy" field in package.json to generate proxy config. If you want to do complex proxy configuration, CRA `react-scripts` advises using the `http-proxy-middleware` package and adding a `src/setupProxy.js` file to config proxies.
+Original CRA `react-scripts` uses a string-typed "proxy" field in package.json to generate proxy config. If you want to do complex proxy configuration, CRA `react-scripts` advises using the `http-proxy-middleware` package and adding a `src/setupProxy.js` (or `src/setupProxy.ts`) file to config proxies.
 
-This way is still supported now and [here](examples/setupProxy.js) is an example config file.
+This way is still supported now and [here](examples/setupProxy.ts) is an example config file.
 
-If you don't want to install a package, `zp-react-scripts` supports taking full use of the "proxy" field of webpack-dev-server config. Just putting a `proxy.config.js` file at the root of your project to do proxy configuration. [Here](examples/proxy.config.js) is the example file.
+If you don't want to install a package, `zp-react-scripts` supports taking full use of the "proxy" field of webpack-dev-server config. Just putting a `proxy.config.js` (or `proxy.config.ts`) file at the root of your project to do proxy configuration. [Here](examples/proxy.config.ts) is the example file.
 
 ### 3. About "publich path"
 
@@ -40,9 +40,26 @@ For `zp-react-srcipts`, "REACT_APP_*" is replaced with "RUNTIME_*" by default to
 
 Of course, you may want to change a prefix of "RUNTIME_". This can be done by adding an environment variable in the `.env` file as `"RUNTIME_ENV_PREFIX=RUNTIME"`. (Don't add "_" character at the end.)
 
-### 5. Path "@" alias to "src"
+### 5. Short path alias to "src"
 
-Add an alias rule to webpack configuration which directs path "@" to "src".
+Generally speaking, you can set the `tsconfig.json` file's "**baseUrl**" as **`"baseUrl": "src"`**, then import your files as this way: `"import Child from 'components/Child.tsx';"`.
+
+I added an alias rule to webpack configuration which directs path "@" to "src".  
+To activate this configuration, create a `tsconfig.paths.json` file as following:
+
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    }
+  }
+}
+```
+
+Then modify the `tsconfig.json` file's "**baseUrl**" field to `"baseUrl": "."`, and add a field **`"extends": "./tsconfig.paths.json"`**.
 
 ### 6. Build path
 
@@ -55,6 +72,8 @@ You can modify the "build path" through an environment variable `BUILD_PATH`.
 * Using a `HOST` envrionment variable to infer "allowedHost" at the local server.
 
 * Using a `PORT` environment variable to infer "port" at the local server. The default port is 3000.
+
+* A `FAST_REFRESH` environment variable is to activate `react-refresh` when its value is not `false`. So it's activated by default.
 
 * `PUBLIC_URL` environment variable will be automaticaly used in building period. But if you want to use it in your app code, set another `RUNTIME_PLUBLIC_URL` environment variable which has a same value to `PUBLIC_URL`.
 

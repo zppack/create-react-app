@@ -43,6 +43,11 @@ const { merge: webpackMerge } = require('webpack-merge');
 
 const appPackageJson = require(paths.appPackageJson);
 
+require('ts-node').register({
+  transpileOnly: true,
+  skipProject: true,
+});
+
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 
@@ -738,8 +743,6 @@ const defaultConfig = function (webpackEnv) {
     // our own hints via the FileSizeReporter
     performance: false,
   };
-
-  return defaultConfig;
 };
 
 let entryConfig = (webpackEnv) => {

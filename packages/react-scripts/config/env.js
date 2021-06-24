@@ -22,8 +22,18 @@ if (!NODE_ENV) {
   );
 }
 
+// The env variable for build and deploy and runtime.
+// Possible values are:
+//    `localhost` for local server,
+//    `dev` for deploying to test, (don't use `test` which is for unit testing)
+//    `staging` for deploying pre-production,
+//    `online` or `prod` for deploying production.
+const APP_ENV = process.env.APP_ENV ?? process.env.BUILD_ENV ?? process.env.DEPLOY_ENV ?? process.env.WINDOW_ENV ?? process.env.NODE_ENV;
+
 // https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use
 const dotenvFiles = [
+  NODE_ENV !== 'test' && `${paths.dotenv}.${APP_ENV}.local`,
+  NODE_ENV !== 'test' && `${paths.dotenv}.${APP_ENV}`,
   `${paths.dotenv}.${NODE_ENV}.local`,
   // Don't include `.env.local` for `test` environment
   // since normally you expect tests to produce the same
@@ -80,6 +90,7 @@ function getClientEnvironment(publicUrl) {
         return env;
       },
       {
+        APP_ENV,
         // Useful for determining whether we’re running in production mode.
         // Most importantly, it switches React into the correct mode.
         NODE_ENV: process.env.NODE_ENV || 'development',

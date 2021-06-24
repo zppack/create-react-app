@@ -40,7 +40,24 @@ For `zp-react-srcipts`, "REACT_APP_*" is replaced with "RUNTIME_*" by default to
 
 Of course, you may want to change a prefix of "RUNTIME_". This can be done by adding an environment variable in the `.env` file as `"RUNTIME_ENV_PREFIX=RUNTIME"`. (Don't add "_" character at the end.)
 
-### 5. Short path alias to "src"
+### 5. Dotenv file
+
+Automatically `.env`, `.env.local`, `.env.${NODE_ENV}` and `.env.${NODE_ENV}.local` files will be loaded.
+
+However, running `build` will always refers `NODE_ENV` to `production`, and running `start` will always refers `NODE_ENV` to `development`. The problem is that you could not specify the env file when deploying to testing machines, because once you want to deploy to testing machines, you have to run `build`, and once you run `build`, the `NODE_ENV` will be set to `production`.
+
+So I add a specific environment variable called `APP_ENV`, and it's value will be `process.env.APP_ENV`. If it has no this value, it will pick the value of `process.env.BUILD_ENV`, then `process.env.DEPLOY_ENV`, then `process.env.WINDOW_ENV`, finally `process.env.NODE_ENV`. You can specify the value in this way `APP_ENV=dev npm run build` and these two dotenv-file: `.env.${APP_ENV}.local` and `.env.${APP_ENV}`, will be loaded.
+
+The environment variable `APP_ENV` will be automatically added to runtime "process.env"。
+
+Recommended APP_ENV's values are:
+
+- `localhost` for local server, you can specify `PORT` and `HOST` in file `.env.localhost`
+- `dev` for deploying to test (don't use `test` which is for unit testing)
+- `staging` for deploying to pre-production
+- `online` or `prod` for deploying to production
+
+### 6. Short path alias to "src"
 
 Generally speaking, you can set the `tsconfig.json` file's "**baseUrl**" as **`"baseUrl": "src"`**, then import your files as this way: `"import Child from 'components/Child.tsx';"`.
 
@@ -61,7 +78,7 @@ To activate this configuration, create a `tsconfig.paths.json` file as following
 
 Then modify the `tsconfig.json` file's "**baseUrl**" field to `"baseUrl": "."`, and add a field **`"extends": "./tsconfig.paths.json"`**.
 
-### 6. Build path
+### 7. Build path
 
 Default "build path" has been changed to "dist" which was "build" before.
 

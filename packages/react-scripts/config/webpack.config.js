@@ -139,9 +139,9 @@ const defaultConfig = function (webpackEnv) {
         options: {
           postcssOptions: {
             plugins: [
-              require('postcss-flexbugs-fixes'),
+              'postcss-flexbugs-fixes',
               [
-                require('postcss-preset-env'),
+                'postcss-preset-env',
                 {
                   autoprefixer: {
                     flexbox: 'no-2009',

@@ -84,6 +84,16 @@ Default "build path" has been changed to "dist" which was "build" before.
 
 You can modify the "build path" through an environment variable `BUILD_PATH`.
 
+### 8. Better postcss support
+
+Support postcss-preset-env stage 0 syntax and support extensions `.pcss` or `.postcss`.
+
+Of course you can also write "stage 0" syntax in a file with extension `.css`.
+
+### 9. Less support
+
+Add support to less-loader. As using sass-loader, you are to install `node-sass` first, you will install `less` before using a `.less` style file.
+
 ## Tips of `react-scripts`
 
 * Using a `HOST` envrionment variable to infer "allowedHost" at the local server.
